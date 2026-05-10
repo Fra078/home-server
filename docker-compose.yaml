@@ -37,4 +37,5 @@ services:
 
 networks:
   media_net:
+    name: media_net
     external: false
