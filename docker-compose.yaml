@@ -34,7 +34,85 @@ services:
       caddy.handle: /lidarr*
       caddy.handle.reverse_proxy: "{{upstreams 8686}}"
     restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+    volumes:
+      - ${CONF_PATH}/qbittorrent:/config
+      - ${DATA_PATH}:/data
+    ports:
+      - 8080:8080 # Temporary for setup
+    networks:
+      - media_net
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /qbit*
+      caddy.handle.reverse_proxy: "{{upstreams 8080}}"
+    restart: unless-stopped
 
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/prowlarr:/config
+    networks:
+      - media_net
+    ports:
+      - 9696:9696 # Temporary
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /prowlarr*
+      caddy.handle.reverse_proxy: "{{upstreams 9696}}"
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/radarr:/config
+      - ${DATA_PATH}:/data
+    networks:
+      - media_net
+    ports:
+      - 7878:7878 # Temporary
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /radarr*
+      caddy.handle.reverse_proxy: "{{upstreams 7878}}"
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/sonarr:/config
+      - ${DATA_PATH}:/data
+    networks:
+      - media_net
+    ports:
+      - 8989:8989 # Temporary
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /sonarr*
+      caddy.handle.reverse_proxy: "{{upstreams 8989}}"
+    restart: unless-stopped
 networks:
   media_net:
     name: media_net
