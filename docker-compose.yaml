@@ -27,8 +27,9 @@ services:
     networks:
       - media_net
     labels:
-      caddy: lidarr.${DOMAIN}
-      caddy.reverse_proxy: "{{upstreams 8686}}"
+      caddy: ${DOMAIN}
+      caddy.handle: /lidarr*
+      caddy.handle.reverse_proxy: "{{upstreams 8686}}"
     restart: unless-stopped
 
 networks:
