@@ -1,0 +1,36 @@
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    container_name: caddy
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=media_net
+    networks:
+      - media_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CONF_PATH}/caddy:/data
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/lidarr:/config
+      - ${DATA_PATH}:/data
+    networks:
+      - media_net
+    labels:
+      caddy: lidarr.${DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 8686}}"
+    restart: unless-stopped
+
+networks:
+  media_net:
+    external: false
