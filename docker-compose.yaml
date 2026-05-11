@@ -178,6 +178,23 @@ services:
       caddy.handle: /lidarr-dl*
       caddy.handle.reverse_proxy: "{{upstreams 5000}}"
     restart: unless-stopped  
+  taglab:
+    image: taglab/taglab:latest
+    container_name: taglab
+    environment:
+      - PUID=${PUID} #
+      - PGID=${PGID} #
+      - TZ=${TZ}     #
+    volumes:
+      - ${CONF_PATH}/taglab:/config #
+      - ${DATA_PATH}/media/music:/music # RW access to fix tags
+    networks:
+      - media_net #
+    labels:
+      caddy: ${DOMAIN} #
+      caddy.handle: /taglab*
+      caddy.handle.reverse_proxy: "{{upstreams 8080}}"
+    restart: unless-stopped #  
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
