@@ -179,22 +179,28 @@ services:
       caddy.handle.reverse_proxy: "{{upstreams 5000}}"
     restart: unless-stopped  
   taglab:
-    image: taglab/taglab:latest
+    image: ghcr.io/cdeschenes/taglab:latest
     container_name: taglab
-    environment:
-      - PUID=${PUID} #
-      - PGID=${PGID} #
-      - TZ=${TZ}     #
+    restart: unless-stopped
+    # Se vuoi accedere via IP locale scommenta la riga sotto, 
+    # altrimenti usa il dominio tramite Caddy.
+    # ports:
+    #   - "8080:8080"
     volumes:
-      - ${CONF_PATH}/taglab:/config #
-      - ${DATA_PATH}/media/music:/music # RW access to fix tags
+      - ${DATA_PATH}/media/music:/music:rw # RW necessario per modificare i file
+      - ${CONF_PATH}/taglab/cache:/cache:rw
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - LIBRARIES=/music:Music # Formato "percorso_interno:nome_visualizzato"
+      - CACHE_PATH=/cache
     networks:
-      - media_net #
+      - media_net
     labels:
-      caddy: ${DOMAIN} #
+      caddy: ${DOMAIN}
       caddy.handle: /taglab*
       caddy.handle.reverse_proxy: "{{upstreams 8080}}"
-    restart: unless-stopped #  
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
