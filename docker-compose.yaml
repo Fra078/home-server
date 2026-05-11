@@ -161,6 +161,7 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - HOMEPAGE_VAR_DOMAIN=${DOMAIN}
       - HOMEPAGE_ALLOWED_HOSTS=${DOMAIN},100.78.14.119,192.168.1.54
     volumes:
       - ${CONF_PATH}/homepage:/app/config
