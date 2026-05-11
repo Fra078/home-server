@@ -170,7 +170,7 @@ services:
       - 3000:3000 # Temp
     labels:
       caddy: ${DOMAIN}
-      caddy.handle: /home*
+      #caddy.handle: /home*
       caddy.handle.reverse_proxy: "{{upstreams 3000}}"
     restart: unless-stopped
     
