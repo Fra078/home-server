@@ -178,29 +178,24 @@ services:
       caddy.handle: /lidarr-dl*
       caddy.handle.reverse_proxy: "{{upstreams 5000}}"
     restart: unless-stopped  
-  taglab:
-    image: ghcr.io/cdeschenes/taglab:latest
-    container_name: taglab
-    restart: unless-stopped
-    # Se vuoi accedere via IP locale scommenta la riga sotto, 
-    # altrimenti usa il dominio tramite Caddy.
+  metadata-remote:
+    image: ghcr.io/wow-signal-dev/metadata-remote:latest
+    container_name: metadata-remote
     ports:
-       - 8060:8080
+      - "8338:8338"
     volumes:
-      - ${DATA_PATH}/media/music:/music:rw # RW necessario per modificare i file
-      - ${CONF_PATH}/taglab/cache:/cache:rw
+      - ${DATA_PATH}/media/music:/music
+    networks:
+      - media_net
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - LIBRARIES=/music:Music # Formato "percorso_interno:nome_visualizzato"
-      - CACHE_PATH=/cache
-    networks:
-      - media_net
     labels:
       caddy: ${DOMAIN}
-      caddy.handle: /taglab*
-      caddy.handle.reverse_proxy: "{{upstreams 8080}}"
+      caddy.handle: /metadata*
+      caddy.handle.reverse_proxy: "{{upstreams 8338}}"  
+    restart: unless-stopped    
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
