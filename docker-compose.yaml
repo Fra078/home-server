@@ -113,6 +113,67 @@ services:
       caddy.handle: /sonarr*
       caddy.handle.reverse_proxy: "{{upstreams 8989}}"
     restart: unless-stopped
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - ND_BASEURL=/navidrome # Sets Base URL automatically
+    volumes:
+      - ${CONF_PATH}/navidrome:/data
+      - ${DATA_PATH}/media/music:/music:ro # Read-only access to media
+    networks:
+      - media_net
+    ports:
+      - 4533:4533 # Temp
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /navidrome*
+      caddy.handle.reverse_proxy: "{{upstreams 4533}}"
+    restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/jellyfin:/config
+      - ${DATA_PATH}/media:/data/media
+    networks:
+      - media_net
+    ports:
+      - 8096:8096 # LEAVE OPEN FOR LOCAL SMART TV
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /jellyfin*
+      caddy.handle.reverse_proxy: "{{upstreams 8096}}"
+    restart: unless-stopped
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Required for Docker stats integration
+    networks:
+      - media_net
+    ports:
+      - 3000:3000 # Temp
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /home*
+      caddy.handle.reverse_proxy: "{{upstreams 3000}}"
+    restart: unless-stopped
+    
 networks:
   media_net:
     name: media_net
