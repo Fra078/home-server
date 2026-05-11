@@ -184,7 +184,7 @@ services:
     restart: unless-stopped
     # Se vuoi accedere via IP locale scommenta la riga sotto, 
     # altrimenti usa il dominio tramite Caddy.
-    # ports:
+    ports:
        - "8080:8060"
     volumes:
       - ${DATA_PATH}/media/music:/music:rw # RW necessario per modificare i file
