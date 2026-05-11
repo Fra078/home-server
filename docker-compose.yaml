@@ -51,8 +51,8 @@ services:
       - media_net
     labels:
       caddy: ${DOMAIN}
-      caddy.handle: /qbit*
-      caddy.handle.reverse_proxy: "{{upstreams 8080}}"
+      caddy.handle_path: /qbit*
+      caddy.handle_path.reverse_proxy: "{{upstreams 8080}}"
     restart: unless-stopped
 
   prowlarr:
