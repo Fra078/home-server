@@ -175,6 +175,16 @@ services:
       #caddy.handle: /home*
       caddy.handle.reverse_proxy: "{{upstreams 3000}}"
     restart: unless-stopped
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - TZ=${TZ}
+    networks:
+      - media_net
+    restart: unless-stopped
+
     
 networks:
   media_net:
