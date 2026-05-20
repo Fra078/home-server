@@ -196,6 +196,25 @@ services:
       caddy.handle: /metadata*
       caddy.handle.reverse_proxy: "{{upstreams 8338}}"  
     restart: unless-stopped    
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONF_PATH}/jellyseerr:/app/config
+    networks:
+      - media_net
+    ports:
+      - 5055:5055
+    labels:
+      caddy: ${DOMAIN}
+      caddy.handle: /jellyseerr*
+      caddy.handle.reverse_proxy: "{{upstreams 5055}}"
+    restart: unless-stopped
+
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
