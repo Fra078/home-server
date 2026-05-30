@@ -153,49 +153,6 @@ services:
       caddy.handle: /jellyfin*
       caddy.handle.reverse_proxy: "{{upstreams 8096}}"
     restart: unless-stopped
-  lidarr-downloader:
-    image: angrido/lidarr-downloader:latest
-    container_name: lidarr-downloader
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-      - LIDARR_URL=http://lidarr:8686
-      - LIDARR_API_KEY=fa2e0420bc5944bd8e79ef95f1183f56 # Replace with Lidarr API Key
-      - DOWNLOAD_PATH=/downloads/ytlidarr
-      - LIDARR_PATH=/music
-      - UMASK=002
-    volumes:
-      - ${CONF_PATH}/lidarr-downloader:/config
-      - ${DATA_PATH}/downloads:/downloads
-      - ${DATA_PATH}/media/music:/music
-    networks:
-      - media_net
-    ports:
-      - 5005:5000
-    labels:
-      caddy: ${DOMAIN}
-      caddy.handle: /lidarr-dl*
-      caddy.handle.reverse_proxy: "{{upstreams 5000}}"
-    restart: unless-stopped  
-  metadata-remote:
-    image: ghcr.io/wow-signal-dev/metadata-remote:latest
-    container_name: metadata-remote
-    ports:
-      - "8338:8338"
-    volumes:
-      - ${DATA_PATH}/media/music:/music
-    networks:
-      - media_net
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    labels:
-      caddy: ${DOMAIN}
-      caddy.handle: /metadata*
-      caddy.handle.reverse_proxy: "{{upstreams 8338}}"  
-    restart: unless-stopped    
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
